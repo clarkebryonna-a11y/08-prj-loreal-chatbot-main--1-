@@ -1,5 +1,5 @@
 // The Worker forwards this request to OpenAI and keeps the API key private.
-const WORKER_URL = "https://loreal-chatbot.your-subdomain.workers.dev/";
+const WORKER_URL = "https://dry-shape-ca7f.clarkebryonna.workers.dev/";
 const OUT_OF_SCOPE_REPLY =
   "I don't know. I can only help with L'Oréal products, beauty routines, and recommendations.";
 const SYSTEM_MESSAGE = `
@@ -47,14 +47,17 @@ async function requestChatbotResponse(message) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       messages,
       max_completion_tokens: 300,
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`Chat request failed with status ${response.status}`);
+    const responseText = await response.text();
+    throw new Error(
+      `Chat request failed with status ${response.status}${responseText ? `: ${responseText}` : ""}`,
+    );
   }
 
   const data = await response.json();
